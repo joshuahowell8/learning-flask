@@ -27,7 +27,10 @@ def signup():
 	form = SignupForm()
 
 	if request.method == 'POST':
-		return "Great Success!!"
+		if form.validate() == False:
+			return render_template('signup.html', form=form)
+		else:
+			return "Great Success!! Signup form was successfully submitted :)"
 	elif request.method == 'GET':
 		return render_template('signup.html', form=form)
 
