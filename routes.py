@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
-from models import db #imports from models.py
+from models import db, User #imports from models.py
 from forms import SignupForm
 
 
 app = Flask(__name__)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/learningflask'
+										#postgresql://localhost/learningflask will NOT work
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///learningflask'
 db.init_app(app)
 
 #This is to prevent Cross-site forgery requests
@@ -30,6 +30,9 @@ def signup():
 		if form.validate() == False:
 			return render_template('signup.html', form=form)
 		else:
+			newuser = User(form.first_name.data, form.last_name.data, form.email.data, form.password.data)
+			db.session.add(newuser) #adds the new user from above to the database
+			db.session.commit() #persistence to database
 			return "Great Success!! Signup form was successfully submitted :)"
 	elif request.method == 'GET':
 		return render_template('signup.html', form=form)
